@@ -101,3 +101,29 @@ sim start                              # shell 1: release the brakes
 ---
 
 *ISC Racing Team, Driverless*
+
+
+Resumen de comandos:
+a) Con el simulador real IFS-SIM:
+-En las dos terminales 
+tools\shell.cmd 
+
+-En la terminal del pipeline:
+2. sb-launch
+
+-En la terminal del simulador:
+1. sim load track_20260404_013721.csv
+3. sim start
+
+
+b) Con el simulador mock:
+-En la terminal del pipeline:
+1. tools\shell.cmd 
+2. sb-launch sim:=mock
+(No hace falta terminal para el simulador)
+
+
+
+
+
+
