@@ -16,13 +16,49 @@ from sandbox_tools import contract
 from sandbox_tools.node_utils import run
 from sandbox_tools.geometry import Pose2D, world_to_body
 
+'''
+Cómo lo teníamos antes:
+return 0.0, 0.0, 1.0
 
+'''
 def compute(path_body: np.ndarray, speed: float):
-    """Path in the car frame + current speed -> (throttle, steering, brake).
+    #De los puntos que ve delante el coche, cogemos uno al que dirigirse
+    ahead = path_body[path_body[:, 0] > 0.0]
+    if len(ahead) == 0:
+        return 0.0, 0.0, 1.0
 
-    steering: + = left, like y in the car frame. tick() flips it for /control_command.
-    """
-    return 0.0, 0.0, 1.0   # stand still. Replace me!
+    
+    #Coordenadas: x cuánto por delante, y cuánto a la izquierda
+    distances = np.linalg.norm(ahead, axis=1)
+    #Elige el punto cuya distancia al coche sea más cercana a 3 m
+    target = ahead[np.argmin(np.abs(distances - 3.0))]
+
+    '''
+    Control P velocidad:
+    giro = 0.3*error lateral
+    -Punto 1m a la izquierda -> giro +0.3
+    -Punto 2m a la izquierda -> giro +0.6
+    '''
+    #CONTROL P DE DIRECCIÓN
+    error_lateral = target[1]  
+    kp_steering = 0.3
+    steering = np.clip(kp_steering * error_lateral, -1.0, 1.0)
+
+    '''
+    Control P de velocidad: 
+    -Si va a 1m/s -> error 2-1=1 -> acelerador = 0.3
+    -Si va a 3m/s -> error 2-3=-1 -> freno 0.3
+    '''
+
+    # CONTROL P DE VELOCIDAD
+    target_speed = 2.0  # m/s
+    kp_speed = 0.3
+    effort = kp_speed * (target_speed - speed)
+
+    throttle = np.clip(effort, 0.0, 1.0)
+    brake = np.clip(-effort, 0.0, 1.0)
+
+    return float(throttle), float(steering), float(brake)
 
 
 class Control(Node):
