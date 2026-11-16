@@ -118,6 +118,7 @@ a) Con el simulador real IFS-SIM:
 -En las dos terminales 
 tools\shell.cmd 
 -Para ejecutar mi control directamente: sb-score control:=telma_pipeline/control --scenario ifssim-B --label telma-control
+-Para el foxglove: sb-score control:=telma_pipeline/control --scenario ifssim-B --label telma-control
 
 -En la terminal del pipeline:
 2. sb-launch
@@ -132,7 +133,6 @@ b) Con el simulador mock:
 1. tools\shell.cmd 
 2. sb-launch sim:=mock
 (No hace falta terminal para el simulador)
-
 
 
 
